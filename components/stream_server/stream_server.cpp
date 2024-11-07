@@ -69,6 +69,7 @@ void StreamServerComponent::publish_sensor() {
 }
 
 void StreamServerComponent::accept() {
+    uint8_t will_echo_command[] = {255, 251, 1};
     struct sockaddr_storage client_addr;
     socklen_t client_addrlen = sizeof(client_addr);
     std::unique_ptr<socket::Socket> socket = this->socket_->accept(reinterpret_cast<struct sockaddr *>(&client_addr), &client_addrlen);
@@ -76,6 +77,7 @@ void StreamServerComponent::accept() {
         return;
 
     socket->setblocking(false);
+    socket->write(will_echo_command, sizeof(will_echo_command));
     std::string identifier = socket->getpeername();
     this->clients_.emplace_back(std::move(socket), identifier, this->buf_head_);
     ESP_LOGD(TAG, "New client connected from %s", identifier.c_str());
