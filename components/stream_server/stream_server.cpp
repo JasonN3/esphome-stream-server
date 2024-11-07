@@ -77,7 +77,7 @@ void StreamServerComponent::accept() {
         return;
 
     socket->setblocking(false);
-    if(this.local_echo_) {
+    if(this->local_echo_) {
         socket->write(will_echo_command, sizeof(will_echo_command));
     }
     std::string identifier = socket->getpeername();
