@@ -30,6 +30,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_BUFFER_SIZE, default=128): cv.All(
                 cv.positive_int, validate_buffer_size
             ),
+            cv.Optional("local_echo", default=False): cv.boolean,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
@@ -41,6 +42,7 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_port(config[CONF_PORT]))
     cg.add(var.set_buffer_size(config[CONF_BUFFER_SIZE]))
+    cg.add(var.set_local_echo(config[CONF_BUFFER_SIZE]))
 
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
