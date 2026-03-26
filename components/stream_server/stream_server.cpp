@@ -73,6 +73,7 @@ void StreamServerComponent::publish_sensor() {
 }
 
 void StreamServerComponent::accept() {
+    uint8_t will_echo_command[] = {255, 251, 1};
     struct sockaddr_storage client_addr;
     socklen_t client_addrlen = sizeof(client_addr);
     std::unique_ptr<socket::Socket> socket = this->socket_->accept(reinterpret_cast<struct sockaddr *>(&client_addr), &client_addrlen);
@@ -80,6 +81,9 @@ void StreamServerComponent::accept() {
         return;
 
     socket->setblocking(false);
+    if(this->local_echo_) {
+        socket->write(will_echo_command, sizeof(will_echo_command));
+    }
 
 #if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
     std::string identifier = std::string{esphome::socket::SOCKADDR_STR_LEN, 0};
